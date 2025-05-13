@@ -16,6 +16,7 @@ pub trait Drawable {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Point(i32, i32);
 
 impl Point {
@@ -37,18 +38,40 @@ impl Drawable for Point {
 
 
 
-// pub struct Line(Point, Point);
+pub struct Line(Point, Point);
 
-// impl Line {
-//     pub fn new(p1: Point, p2: Point) -> Self {
-//         Line(p1, p2)
-//     }
+impl Line {
+    pub fn new(p1: &Point, p2: &Point) -> Self {
+        Line(p1.clone(), p2.clone())
+    }
 
-//     pub fn random(width: i32, height: i32) -> Self {
-//         let mut rng = rand::rng();
-//         Self::new(&Point::random(width, height), &Point::random(width, height))
-//     }
-// }
+    pub fn random(width: i32, height: i32) -> Self {
+        Self::new(&Point::random(width, height), &Point::random(width, height))
+    }
+}
+
+impl Drawable for Line {
+    fn draw(&self, image: &mut Image) {
+        let x1 = self.0.0 ;
+        let x2 = self.1.0 ;
+        let y1 = self.0.1 ;
+        let y2 = self.1.1 ;
+        let x_diff = x2-x1;
+        let y_diff = y2-y1;
+
+        let max:i32 = x_diff.max(y_diff);
+        let mut current_x = x1.into();
+        let mut current_y= y1.into();
+        
+        for _ in 0..max{
+            image.display(current_x, current_y, self.color());
+            current_x += x_diff/max;
+            current_y += y_diff/max;
+        }
+
+        //image.display(self.0, self.1, self.color());
+    }
+}
 
 // pub struct Triangle(Point, Point, Point);
 
